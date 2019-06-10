@@ -112,7 +112,7 @@ def handle_todo():
             raise APIException('You need to specify a Todo', status_code=400)
 
 
-        todo1 = Todo(username=body['todo_item'])
+        todo1 = Todo(todo_item=body['todo_item'])
         db.session.add(todo1)
         db.session.commit()
         return "ok", 200
@@ -120,7 +120,7 @@ def handle_todo():
     # GET request
     if request.method == 'GET':
         all_todos = Todo.query.all()
-        all_todose = list(map(lambda x: x.serialize(), all_todos))
+        all_todos = list(map(lambda x: x.serialize(), all_todos))
         return jsonify(all_todos), 200
 
     return "Invalid Method", 404
