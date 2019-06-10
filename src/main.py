@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
-from models import db, Person
+from models import db, Person, Todo
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
@@ -93,6 +93,35 @@ def get_single_person(person_id):
             raise APIException('User not found', status_code=404)
         db.session.delete(user1)
         return "ok", 200
+
+    return "Invalid Method", 404
+
+@app.route('/todo', methods=['POST', 'GET'])
+def handle_todo():
+    """
+    Create person and retrieve all persons
+    """
+
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        if 'todo_item' not in body:
+            raise APIException('You need to specify a Todo', status_code=400)
+
+
+        todo1 = Todo(username=body['todo_item'])
+        db.session.add(todo1)
+        db.session.commit()
+        return "ok", 200
+
+    # GET request
+    if request.method == 'GET':
+        all_todos = Todo.query.all()
+        all_todose = list(map(lambda x: x.serialize(), all_todos))
+        return jsonify(all_todos), 200
 
     return "Invalid Method", 404
 
