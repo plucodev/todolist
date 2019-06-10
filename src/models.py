@@ -13,5 +13,18 @@ class Person(db.Model):
     def serialize(self):
         return {
             "username": self.username,
-            "email": self.email
+            "email": self.email,
+            "id": self.id
+        }
+class Todo(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    todo_item = db.Column(db.String(120), unique=True, nullable=False)
+
+    def __repr__(self):
+        return '<Todo %r>' % self.todo_item
+
+    def serialize(self):
+        return {
+            "todo_item": self.todo_item,
+            "id": self.id
         }
